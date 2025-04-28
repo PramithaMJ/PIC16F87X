@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PIC16F87X Programming Tutorials</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e3a8a;
+            --accent-color: #f97316;
+            --light-bg: #f8fafc;
+            --dark-bg: #1e293b;
+            --text-color: #334155;
+            --text-light: #f8fafc;
+            --code-bg: #0f172a;
+            --code-text: #e2e8f0;
+            --border-color: #cbd5e1;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        header p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+        
+        nav {
+            background-color: var(--dark-bg);
+            padding: 0.5rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        nav .container {
+            padding: 0.5rem 1rem;
+        }
+        
+        nav ul {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        nav ul li a {
+            color: var(--text-light);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        nav ul li a:hover, nav ul li a.active {
+            background-color: rgba(255,255,255,0.1);
+            transform: translateY(-2px);
+        }
+        
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('/api/placeholder/1200/400') center/cover no-repeat;
+            color: white;
+            padding: 5rem 1rem;
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .hero h2 {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .hero p {
+            font-size: 1.3rem;
+            max-width: 800px;
+            margin: 0 auto 2rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--accent-color);
+            color: white;
+            padding: 0.8rem 1.8rem;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-top: 1rem;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .btn:hover {
+            background-color: #ea580c;
+            transform: translateY(-3px);
+        }
+        
+        .section {
+            margin-bottom: 4rem;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+        
+        .section-header {
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 1.5rem 2rem;
+            position: relative;
+        }
+        
+        .section-header h2 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .section-header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+        
+        .section-content {
+            padding: 2rem;
+        }
+        
+        .tabs {
+            display: flex;
+            overflow-x: auto;
+            background-color: #f1f5f9;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .tab-btn {
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            color: var(--text-color);
+            white-space: nowrap;
+        }
+        
+        .tab-btn:hover {
+            background-color: rgba(37, 99, 235, 0.1);
+        }
+        
+        .tab-btn.active {
+            color: var(--primary-color);
+            border-bottom: 3px solid var(--primary-color);
+            background-color: rgba(37, 99, 235, 0.05);
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 2rem;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        code {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #f1f5f9;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+        
+        pre {
+            background-color: var(--code-bg);
+            color: var(--code-text);
+            padding: 1.5rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            position: relative;
+        }
+        
+        pre code {
+            background-color: transparent;
+            padding: 0;
+            color: inherit;
+            font-size: inherit;
+        }
+        
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 1.5rem;
+            background-color: #0d1424;
+            color: #d1d5db;
+            border-radius: 8px 8px 0 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 0.9rem;
+            margin-top: 1.5rem;
+        }
+        
+        pre.with-header {
+            margin-top: 0;
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }
+        
+        .copy-btn {
+            padding: 0.3rem 0.8rem;
+            background-color: rgba(255,255,255,0.1);
+            border: none;
+            border-radius: 4px;
+            color: #d1d5db;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+        
+        .copy-btn:hover {
+            background-color: rgba(255,255,255,0.2);
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .feature-card {
+            background-color: #f8fafc;
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid var(--border-color);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0,0,0,0.05);
+        }
+        
+        .feature-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .feature-card h3 svg {
+            width: 24px;
+            height: 24px;
+        }
+        
+        .feature-card p {
+            color: var(--text-color);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        thead {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        tbody tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+        
+        tbody tr:hover {
+            background-color: #f1f5f9;
+        }
+        
+        .step {
+            display: flex;
+            margin-bottom: 2rem;
+            gap: 1.5rem;
+        }
+        
+        .step-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        .explanation {
+            background-color: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-color);
+            margin: 1.5rem 0;
+        }
+        
+        .explanation h4 {
+            color: var(--accent-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        footer {
+            background-color: var(--dark-bg);
+            color: var(--text-light);
+            padding: 3rem 0;
+            text-align: center;
+            margin-top: 4rem;
+        }
+        
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+        
+        .footer-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: var(--accent-color);
+        }
+        
+        @media (max-width: 768px) {
+            .hero h2 {
+                font-size: 2.2rem;
+            }
+            
+            .hero p {
+                font-size: 1.1rem;
+            }
+            
+            .section-header h2 {
+                font-size: 1.5rem;
+            }
+            
+            .section-content, .tab-content {
+                padding: 1.5rem;
+            }
+            
+            .step {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>PIC16F87X Programming Tutorials</h1>
+        <p>Learn microcontroller programming with detailed examples and explanations</p>
+    </header>
+    
+    <nav>
+        <div class="container">
+            <ul>
+                <li><a href="#overview" class="active">Overview</a></li>
+                <li><a href="#tutorials">Tutorials</a></li>
+                <li><a href="#code-examples">Code Examples</a></li>
+                <li><a href="#resources">Resources</a></li>
+                <li><a href="#about">About</a></li>
+            </ul>
+        </div>
+    </nav>
+    
+    <section class="hero">
+        <div class="container">
+            <h2>Master PIC Microcontroller Programming</h2>
+            <p>A comprehensive collection of tutorials, code examples, and explanations for the PIC16F87X series</p>
+            <a href="#tutorials" class="btn">Start Learning</a>
+        </div>
+    </section>
+    
+    <div class="container" id="overview">
+        <section class="section">
+            <div class="section-header">
+                <h2>About PIC16F87X Microcontrollers</h2>
+                <p>Understanding the basics of PIC16F877 and related microcontrollers</p>
+            </div>
+            <div class="section-content">
+                <p>The PIC16F87X series, including the PIC16F877, are powerful 8-bit microcontrollers from Microchip Technology widely used in embedded systems and electronic projects. With their versatile features and ease of programming, they're perfect for learning microcontroller concepts and building practical applications.</p>
+                
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h3>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                                <line x1="8" y1="21" x2="16" y2="21"></line>
+                                <line x1="12" y1="17" x2="12" y2="21"></line>
+                            </svg>
+                            40-Pin Architecture
+                        </h3>
+                        <p>The PIC16F877 comes in a 40-pin package, providing numerous I/O pins and peripherals for interfacing with external devices and sensors.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h3>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="4 17 10 11 4 5"></polyline>
+                                <line x1="12" y1="19" x2="20" y2="19"></line>
+                            </svg>
+                            RISC Architecture
+                        </h3>
+                        <p>Features a high-performance RISC CPU with only 35 single-word instructions, most executing in a single cycle for efficient processing.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h3>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                            </svg>
+                            Memory
+                        </h3>
+                        <p>Includes 8K words of Flash Program Memory, 368 bytes of Data Memory (RAM), and 256 bytes of EEPROM data memory for flexible storage options.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h3>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+                                <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+                                <line x1="6" y1="6" x2="6.01" y2="6"></line>
+                                <line x1="6" y1="18" x2="6.01" y2="18"></line>
+                            </svg>
+                            Multiple I/O Ports
+                        </h3>
+                        <p>Features multiple I/O ports (PORTA through PORTE) that can be individually configured as input or output pins for interfacing with external devices.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <div class="container" id="tutorials">
+        <section class="section">
+            <div class="section-header">
+                <h2>PIC Programming Fundamentals</h2>
+                <p>Essential concepts for programming PIC microcontrollers</p>
+            </div>
+            <div class="section-content">
+                <div class="tabs">
+                    <button class="tab-btn active" onclick="openTab(event, 'bank-switching')">Bank Switching</button>
+                    <button class="tab-btn" onclick="openTab(event, 'port-configuration')">Port Configuration</button>
+                    <button class="tab-btn" onclick="openTab(event, 'program-structure')">Program Structure</button>
+                    <button class="tab-btn" onclick="openTab(event, 'instructions')">Key Instructions</button>
+                </div>
+                
+                <div id="bank-switching" class="tab-content active">
+                    <h3>Bank Switching in PIC Microcontrollers</h3>
+                    <p>The PIC16F877 organizes its registers into different banks. To access registers in different banks, you need to switch between them using the RP0 and RP1 bits in the STATUS register.</p>
+                    
+                    <div class="explanation">
+                        <h4>Why Bank Switching?</h4>
+                        <p>The PIC16F877 has more registers than can be addressed in its limited address space. By organizing registers into banks, it can access more registers using the same address space.</p>
+                    </div>
+                    
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Bank</th>
+                                <th>RP1 (Bit 6)</th>
+                                <th>RP0 (Bit 5)</th>
+                                <th>Registers</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Bank 0</td>
+                                <td>0</td>
+                                <td>0</td>
+                                <td>PORTA, PORTB, PORTC, PORTD, etc.</td>
+                            </tr>
+                            <tr>
+                                <td>Bank 1</td>
+                                <td>0</td>
+                                <td>1</td>
+                                <td>TRISA, TRISB, TRISC, TRISD, ADCON1, etc.</td>
+                            </tr>
+                            <tr>
+                                <td>Bank 2</td>
+                                <td>1</td>
+                                <td>0</td>
+                                <td>Other special function registers</td>
+                            </tr>
+                            <tr>
+                                <td>Bank 3</td>
+                                <td>1</td>
+                                <td>1</td>
+                                <td>Additional special function registers</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <p>Here are the macros commonly used for bank switching:</p>
+                    
+                    <div class="code-header">
+                        <span>Bank Switching Macros</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre class="with-header"><code>BANK0   MACRO
+        BCF STATUS, RP0             ; RP0 = 0
+        BCF STATUS, RP1             ; RP1 = 0 --> BANK 0
+        ENDM
+
+BANK1   MACRO
+        BSF STATUS, RP0             ; RP0 = 1
+        BCF STATUS, RP1             ; RP1 = 0 --> BANK 1
+        ENDM
+
+BANK2   MACRO
+        BCF STATUS, RP0             ; RP0 = 0
+        BSF STATUS, RP1             ; RP1 = 1 --> BANK 2
+        ENDM
+
+BANK3   MACRO
+        BSF STATUS, RP0             ; RP0 = 1
+        BSF STATUS, RP1             ; RP1 = 1 --> BANK 3
+        ENDM</code></pre>
+                </div>
+                
+                <div id="port-configuration" class="tab-content">
+                    <h3>Configuring I/O Ports</h3>
+                    <p>Properly configuring input and output ports is essential for PIC microcontroller programming. This involves setting the direction of each pin using the TRIS registers.</p>
+                    
+                    <div class="explanation">
+                        <h4>TRIS Registers</h4>
+                        <p>Each bit in a TRIS register determines whether the corresponding pin is an input or output:</p>
+                        <ul>
+                            <li><strong>1 (Set)</strong>: Configures the pin as an <strong>input</strong></li>
+                            <li><strong>0 (Clear)</strong>: Configures the pin as an <strong>output</strong></li>
+                        </ul>
+                    </div>
+                    
+                    <h4>Common Port Configuration Examples:</h4>
+                    
+                    <div class="code-header">
+                        <span>Setting PORTD as Output</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre class="with-header"><code>INITP
+    MOVLW   0x00                ; WREG = 0 (all zeros)
+    MOVWF   TRISD               ; Make PORTD pins output (TRIS = 0 → output)
+    RETURN</code></pre>
+                    
+                    <div class="code-header">
+                        <span>Setting PORTA as Input</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre class="with-header"><code>INITP
+    BANK1                       ; Switch to Bank 1 (TRISA is in Bank 1)
+    MOVLW   0x06                ; Configure ADCON1 for digital I/O
+    MOVWF   ADCON1
+    MOVLW   0xFF                ; WREG = 0xFF (all ones)
+    MOVWF   TRISA               ; Make PORTA all INPUT (TRIS=1 means input)
+    BANK0                       ; Back to Bank 0
+    RETURN</code></pre>
+                    
+                    <div class="explanation">
+                        <h4>Important Note on PORTA</h4>
+                        <p>When using PORTA as digital I/O, you must also configure the ADCON1 register to disable the analog inputs on those pins. Otherwise, they will function as analog inputs by default.</p>
+                    </div>
+                </div>
+                
+                <div id="program-structure" class="tab-content">
+                    <h3>PIC Assembly Program Structure</h3>
+                    <p>Understanding the standard structure of a PIC assembly program helps organize your code effectively.</p>
+                    
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div>
+                            <h4>Header and Configuration</h4>
+                            <p>Every program starts with comments describing the program and processor directives:</p>
+                            <pre><code>; ########## PROGRAM_NAME.ASM 
+; WRITTEN BY: PramithaMJ
+; DATE: 2024-04-29
+; DEVICE: PIC16F877
+; TITLE: "Program Purpose"
+
+    LIST    P=16F877            ; Set PIC model
+    INCLUDE <P16F877.INC>       ; Include register names</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div>
+                            <h4>Macros and Variable Definitions</h4>
+                            <p>Define any macros (like bank switching) and variables (using EQU directive):</p>
+                            <pre><code>; Bank switching macros here...
+
+; Memory location definitions
+STOREDATA EQU 0x20              ; Define memory location for data</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div>
+                            <h4>Reset Vector</h4>
+                            <p>The program always starts at address 0x00 when the microcontroller resets:</p>
+                            <pre><code>    ORG     0x00                ; Reset vector
+    NOP                         ; Optional No Operation
+    GOTO    START               ; Jump to main program</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div>
+                            <h4>Main Program</h4>
+                            <p>The main program typically starts at address 0x20:</p>
+                            <pre><code>    ORG     0x20                ; Main program starts
+
+START
+    CALL    INITP               ; Initialize ports
+    
+LOOP
+    ; Main program logic here
+    GOTO    LOOP                ; Continuous loop</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="step">
+                        <div class="step-number">5</div>
+                        <div>
+                            <h4>Subroutines</h4>
+                            <p>Define subroutines for specific tasks:</p>
+                            <pre><code>; --- Initialization Subroutine ---
+INITP
+    ; Port initialization code
+    RETURN
+
+; --- Other subroutines ---</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="step">
+                        <div class="step-number">6</div>
+                        <div>
+                            <h4>End of Program</h4>
+                            <p>Every program must end with the END directive:</p>
+                            <pre><code>    END                         ; End of program</code></pre>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="instructions" class="tab-content">
+                    <h3>Key PIC Assembly Instructions</h3>
+                    <p>Understanding common instructions used in PIC assembly programming:</p>
+                    
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Instruction</th>
+                                <th>Description</th>
+                                <th>Example</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>MOVLW</td>
+                                <td>Move Literal to W register</td>
+                                <td><code>MOVLW 0x55</code> - Load W with value 0x55</td>
+                            </tr>
+                            <tr>
+                                <td>MOVWF</td>
+                                <td>Move W to File register</td>
+                                <td><code>MOVWF PORTD</code> - Write W to PORTD</td>
+                            </tr>
+                            <tr>
+                                <td>MOVF</td>
+                                <td>Move File register</td>
+                                <td><code>MOVF PORTA, W</code> - Read PORTA into W</td>
+                            </tr>
+                            <tr>
+                                <td>CLRF</td>
+                                <td>Clear File register</td>
+                                <td><code>CLRF PORTD</code> - Clear all bits in PORTD</td>
+                            </tr>
+                            <tr>
+                                <td>BSF</td>
+                                <td>Bit Set File register</td>
+                                <td><code>BSF STATUS, RP0</code> - Set bit RP0 in STATUS</td>
+                            </tr>
+                            <tr>
+                                <td>BCF</td>
+                                <td>Bit Clear File register</td>
+                                <td><code>BCF STATUS, RP0</code> - Clear bit RP0 in STATUS</td>
+                            </tr>
+                            <tr>
+                                <td>GOTO</td>
+                                <td>Go to address/label</td>
+                                <td><code>GOTO START</code> - Jump to label START</td>
+                            </tr>
+                            <tr>
+                                <td>CALL</td>
+                                <td>Call subroutine</td>
+                                <td><code>CALL INITP</code> - Call subroutine INITP</td>
+                            </tr>
+                            <tr>
+                                <td>RETURN</td>
+                                <td>Return from subroutine</td>
+                                <td><code>RETURN</code> - Return to caller</td>
+                            </tr>
+                            <tr>
+                                <td>NOP</td>
+                                <td>No Operation</td>
+                                <td><code>NOP</code> - Do nothing for one cycle</td>
+                            </tr
+                            
